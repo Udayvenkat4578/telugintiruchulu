@@ -1,24 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import Categories from "./Components/Categories";
+import CategoriesMain from "./Components/CategoriesMain";
+import ProductDetail from "./Components/ProductDetail";
+import CartPage from "./Components/CartPage";
+import MiniCart from "./Components/MiniCart";
+import { CartProvider } from "./Components/CartContext";
+import { WishlistProvider } from "./Components/WishlistContext";
+import Navbar from "./Components/Navbar";
+import Landing from "./Components/Landing";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <WishlistProvider>
+      <CartProvider>
+        <Router>
+          <MiniCart />
+          <div className="bg-gray-50 min-h-screen">
+                  <Navbar/>
+            <main className="">
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/categories" element={<CategoriesMain />} />
+                <Route path="/product/:id" element={<ProductDetail />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="*" element={<div className="p-6">Not found</div>} />
+              </Routes>
+            </main>
+          </div>
+        </Router>
+      </CartProvider>
+    </WishlistProvider>
   );
 }
 
