@@ -1,35 +1,53 @@
-// Components/CartContext.js
-import React, { createContext, useContext, useState } from "react";
+// src/Components/CartContext.jsx
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext();
+export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("cart_v1")) || [];
+    } catch {
+      return [];
+    }
+  });
+
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [addingItemId, setAddingItemId] = useState(null);
+
+  useEffect(() => {
+    localStorage.setItem("cart_v1", JSON.stringify(cart));
+  }, [cart]);
 
   const addToCart = (item) => {
-    setCart((prevCart) => {
-      const existingIndex = prevCart.findIndex(
+    setCart((prev) => {
+      const existingIndex = prev.findIndex(
         (i) => i.id === item.id && i.sizeLabel === item.sizeLabel
       );
-      if (existingIndex > -1) {
-        const updatedCart = [...prevCart];
-        updatedCart[existingIndex].quantity += item.quantity;
-        return updatedCart;
+      if (existingIndex >= 0) {
+        const updated = [...prev];
+        updated[existingIndex].quantity += item.quantity;
+        return updated;
       }
-      return [...prevCart, item];
+      return [...prev, item];
     });
-
-    setAddingItemId(item.id + "-" + item.sizeLabel);
-    setIsCartOpen(true);
-
-    setTimeout(() => setAddingItemId(null), 5000);
+    setIsCartOpen(true); // open mini cart on add
   };
 
   const removeFromCart = (id, sizeLabel) => {
     setCart((prev) =>
       prev.filter((item) => !(item.id === id && item.sizeLabel === sizeLabel))
+    );
+  };
+
+  const updateQuantity = (id, sizeLabel, newQty) => {
+    if (newQty < 1) return;
+    setCart((prev) =>
+      prev.map((item) =>
+        item.id === id && item.sizeLabel === sizeLabel
+          ? { ...item, quantity: newQty }
+          : item
+      )
     );
   };
 
@@ -44,16 +62,14 @@ export const CartProvider = ({ children }) => {
         cart,
         addToCart,
         removeFromCart,
+        updateQuantity,
         clearCart,
         isCartOpen,
         openCart,
         closeCart,
-        addingItemId,
       }}
     >
       {children}
     </CartContext.Provider>
   );
 };
-
-export const useCart = () => useContext(CartContext);
