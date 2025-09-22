@@ -26,8 +26,8 @@ const Boxes = () => {
   };
 
   return (
-    <div className="bg-[#FFF7E2] py-4 pb-6">
-<h2 className="text-2xl md:text-4xl font-gothic text-center mb-8 text-gray-800 flex items-center justify-center gap-2">
+    <div className="bg-[#FFF7E2] py-6  pb-6">
+<h2 className="text-2xl md:text-4xl font-gothic text-center mb-8 text-gray-800 flex items-center justify-center gap-2 pt-4">
   <Sparkles size={24} color="#ff0000" />
   Featured Categories
   <Sparkles size={24} color="#ff0000" />
@@ -62,7 +62,7 @@ const Boxes = () => {
             </div>
 
             {/* Category Name */}
-            <p className="text-center text-gray-900 py-2 text-sm md:text-sm font-gothic uppercase tracking-wide pb-4">
+            <p className="text-center text-gray-900 py-2 text-sm md:text-sm font-gothic uppercase tracking-wide pb-2">
               {cat.name}
             </p>
           </div>

@@ -10,6 +10,9 @@ const WishlistPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => { 
+    window.scrollTo(0, 0); 
+  }, []);
   useEffect(() => {
     const fetchWishlistProducts = async () => {
       setLoading(true);

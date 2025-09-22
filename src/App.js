@@ -11,22 +11,21 @@ import Footer from "./Components/Footer";
 import Landing from "./Components/Landing";
 import WishlistPage from "./Components/WishlistPage";
 import AboutUs from "./Components/AboutUs";
-import Checkout from "./Components/CheckoutPage"; // ✅ Added
+import Checkout from "./Components/CheckoutPage"; 
 
-import Payment from "./Components/Payment"; // ✅ Added
 function App() {
   return (
     <WishlistProvider>
       <CartProvider>
         <Router>
           <MiniCart />
-          <div className="bg-gray-50 min-h-screen">
+          <div className="bg-gray-50 ">
             <Navbar />
             <main>
               <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="/categories" element={<CategoriesMain />} />
-                <Route path="/product/:id" element={<ProductDetail />} />
+                <Route path="/product/:name" element={<ProductDetail />} />
                 <Route path="/Aboutus" element={<AboutUs />} />
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/checkout" element={<Checkout />} /> {/* ✅ Added */}

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Sparkles, ChevronDown, ChevronUp } from "lucide-react";
 import contactImage from "../Assets/Contact-Us.png"; // replace with your image path
+import { useEffect } from "react";
 
 const policiesData = [
   {
@@ -64,6 +65,10 @@ These terms are governed by the laws of India. Any disputes will be resolved in 
 ];
 
 const AboutUs = () => {
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const [expandedIndex, setExpandedIndex] = useState(null);
   const [form, setForm] = useState({ name: "", phone: "", email: "", message: "" });
   const [formStatus, setFormStatus] = useState("submit"); // submit, submitting, submitted

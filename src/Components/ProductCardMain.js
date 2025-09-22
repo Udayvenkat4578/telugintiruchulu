@@ -87,7 +87,7 @@ const ProductCard = ({ product }) => {
         <div className="flex justify-center">
         <div className="mt-3 flex items-center justify-between ">
           <Link
-            to={`/product/${product?.id}`}
+            to={`/product/${encodeURIComponent(product.name)}`}
             className="flex items-center font-medium gap-2 text-sm bg-red-600 hover:scale-105 transition text-white px-3 py-1 rounded"
           >
             <img src={options} className="h-4 w-4" alt="options" />
@@ -101,3 +101,4 @@ const ProductCard = ({ product }) => {
 };
 
 export default ProductCard;
+

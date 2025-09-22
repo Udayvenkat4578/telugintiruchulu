@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect} from "react";
 import { useCart } from "./CartContext";
 import { useWishlist } from "./WishlistContext";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,6 +6,9 @@ import emptycart from "../Assets/emptycart.png";
 import { FaTrash, FaPlus, FaMinus } from "react-icons/fa";
 
 const CartPage = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const { cart, removeFromCart, clearCart, updateQuantity } = useCart();
   const { wishlist } = useWishlist();
   const navigate = useNavigate();

@@ -64,7 +64,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="overflow-x-hidden bg-gray-900 text-white pt-12">
+    <footer className="overflow-x-hidden bg-gray-900 text-white pt-8">
       <div className="max-w-7xl mx-auto px-6">
         {/* Top Sections */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
@@ -75,12 +75,12 @@ const Footer = () => {
               className="flex items-center justify-center md:justify-start space-x-2"
             >
               {/* Logo */}
-              <img src={logo} className="h-12" alt="Logo" />
+              <img src={logo} className="sm:h-12  h-24" alt="Logo" />
 
               {/* Text (hidden on mobile, visible on md and above) */}
               <div className="hidden md:block">
                 <h2 className="text-2xl font-bold text-red-500">
-                  Telugintiruchulu
+                  SPTelugintiruchulu
                 </h2>
                 <p className="text-xs text-gray-200">
                   Flavours that tell a Story

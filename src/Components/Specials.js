@@ -6,12 +6,12 @@ import { Sparkles } from "lucide-react";
 
 const Specials = () => {
   const products = [
-    { id: "24XuFupEEucDxUeqFJPV", name: "Munagaku Podi", image: "https://res.cloudinary.com/dolusspah/image/upload/v1757838243/yesriajcr8f6zxoenl4p.jpg", category: "Podulu" },
-    { id: "HyPdFSmkqPMbEZR00CvA", name: "Pootharekulu", image: "https://res.cloudinary.com/dolusspah/image/upload/v1757832889/izkgc2a6l8evtben4n15.webp", category: "Sweets" },
-    { id: "eMWXxUHkiTGvZuRfFuzq", name: "Prawns Pickle", image: "https://res.cloudinary.com/dolusspah/image/upload/v1757835659/iwl9v2ecsfjoa239kph0.jpg", category: "nonvegpickle" },
-    { id: "QHH42fUa7IgBTkrgTeMm", name: "Gavvalu", image: "https://res.cloudinary.com/dolusspah/image/upload/v1757836164/vved6tdqfky7sinvwzgu.webp", category: "Snacks" },
-    { id: "3YDhII44eBC4GO3Q8s6m", name: "Lemon Pickle", image: "https://res.cloudinary.com/dolusspah/image/upload/v1757795388/nbqb1ur1ssgybhdjuitb.jpg", category: "vegpickle" },
-    { id: "4y97cv5QG3IFoQsPoTu0", name: "Ariselu", image: "https://res.cloudinary.com/dolusspah/image/upload/v1757830860/ur84fha2d4swulhenoiq.webp", category: "Sweets" },
+    {display:"Munagaku podi", name: "Munagaku Karam Podi", image: "https://res.cloudinary.com/dolusspah/image/upload/v1757838243/yesriajcr8f6zxoenl4p.jpg", category: "Podulu" },
+    {display:"pootharekulu", name: "Pootharekulu(Dry Fruit)", image: "https://res.cloudinary.com/dolusspah/image/upload/v1757832889/izkgc2a6l8evtben4n15.webp", category: "Sweets" },
+    {display:"Prawns Pickle", name: "Prawns Pickle", image: "https://res.cloudinary.com/dolusspah/image/upload/v1757835659/iwl9v2ecsfjoa239kph0.jpg", category: "nonvegpickle" },
+    {display:"Gavvalu", name: "Gavvalu(Hot)", image: "https://res.cloudinary.com/dolusspah/image/upload/v1757836164/vved6tdqfky7sinvwzgu.webp", category: "Snacks" },
+    {display:"Lemon Pickle", name: "Lemon Pickle", image: "https://res.cloudinary.com/dolusspah/image/upload/v1757795388/nbqb1ur1ssgybhdjuitb.jpg", category: "vegpickle" },
+    {display:"Ariselu", name: "Ariselu(Ghee)", image: "https://res.cloudinary.com/dolusspah/image/upload/v1757830860/ur84fha2d4swulhenoiq.webp", category: "Sweets" },
   ];
 
   const loopItems = [...products, ...products];
@@ -101,21 +101,21 @@ const Specials = () => {
     lastInteractionRef.current = performance.now();
   };
 
-  const handleCardClick = (id) => {
-    navigate(`/product/${id}`);
+  const handleCardClick = (name) => {
+    navigate(`/product/${encodeURIComponent(name)}`);
   };
 
   return (
     <div className="w-full py-2">
       {/* Heading */}
-      <h2 className="text-2xl  pt-6 md:text-4xl font-gothic text-center mb-6 flex items-center justify-center gap-2 text-gray-800">
+      <h2 className="text-2xl pt-6 md:text-4xl font-gothic text-center mb-6 flex items-center justify-center gap-2 text-gray-800">
         <Sparkles size={20} color="#ff0000" />
         Our Curated Collection
         <Sparkles size={20} color="#ff0000" />
       </h2>
 
       {/* Mobile Banner + Scroller */}
-      <div className="md:hidden ">
+      <div className="md:hidden">
         {/* Banner */}
         <div
           className="relative flex flex-col items-center justify-center text-center text-white py-9 px-6 mx-2"
@@ -146,8 +146,8 @@ const Specials = () => {
         >
           {loopItems.map((food, idx) => (
             <div
-              key={`${food.id}-${idx}`}
-              onClick={() => handleCardClick(food.id)}
+              key={`${food.name}-${idx}`}
+              onClick={() => handleCardClick(food.name)}
               className="w-[180px] h-[240px] flex-shrink-0 rounded-xl relative overflow-hidden shadow-md cursor-pointer transform transition duration-300 hover:scale-105"
             >
               <img
@@ -200,8 +200,8 @@ const Specials = () => {
           >
             {loopItems.map((food, idx) => (
               <div
-                key={`${food.id}-${idx}`}
-                onClick={() => handleCardClick(food.id)}
+                key={`${food.name}-${idx}`}
+                onClick={() => handleCardClick(food.name)}
                 className="w-[220px] h-[300px] flex-shrink-0 rounded-2xl relative overflow-hidden shadow-lg cursor-pointer transform transition duration-300 hover:scale-105"
               >
                 <img

@@ -7,6 +7,7 @@ import Trust from "./Trust";
 import Reviews from "./Reviews";
 import x from "../Assets/x.png";
 import chatbot from "../Assets/chatbot.png";
+import Navbar from "./Navbar";
 
 const Landing = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -39,7 +40,7 @@ const Landing = () => {
 
   return (
     <div>
-      <Herosec />
+    <Herosec />
       <Boxes />
       <Trust />
       <Specials />
@@ -48,11 +49,11 @@ const Landing = () => {
 
       {/* ✅ Chatbot only on Landing */}
       <div
-        className="fixed right-4 z-10 flex-col items-center transition-all pb-6 pr-1 duration-200"
+        className="fixed right-4 z-50 flex-col items-center transition-all pb-3 pr-1 duration-200"
         style={{ bottom: `${chatBottom}px` }}
       >
         {/* Chat Text */}
-        <div className="w-32 flex justify-end mr-9">
+        <div className="w-32 flex justify-end mr-4">
           {showText && (
             <div
               className="text-white sm:text-xs text-[10px] bg-blue-400 sm:font-bold font-semibold px-2 py-1.5 border-2 border-black select-none"

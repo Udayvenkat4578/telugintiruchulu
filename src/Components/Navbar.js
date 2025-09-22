@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "./CartContext";
 import { useWishlist } from "./WishlistContext"; 
 import { FaShoppingCart, FaSearch, FaBars, FaTimes, FaHeart } from "react-icons/fa";
+import { FaWhatsapp, FaMapMarkerAlt, FaRegCommentDots } from "react-icons/fa"; 
 import logo from "../Assets/logo.png";
 
 const Navbar = () => {
@@ -41,11 +42,11 @@ const Navbar = () => {
           </div>
 
           {/* Logo */}
-          <div className="flex-1 flex flex-col md:flex-row items-center justify-center md:justify-start">
+          <div className="flex-1 flex flex-col md:flex-row items-center pl-11 ml-3 justify-center md:justify-start">
             <Link to="/" className="flex items-center justify-center space-x-2">
-              <img src={logo} className="sm:h-12 h-24 sm:pt-0 pt-5" alt="Logo" />
+              <img src={logo} className="sm:h-12 h-24 z-50 sm:pt-0 pt-5" alt="Logo" />
               <div className="hidden md:block">
-                <h2 className="text-2xl font-bold text-red-500">Telugintiruchulu</h2>
+                <h2 className="text-2xl font-bold text-red-500">SPTelugintiruchulu</h2>
                 <p className="text-xs text-gray-600">Flavours that tell a Story</p>
               </div>
             </Link>
@@ -53,10 +54,20 @@ const Navbar = () => {
 
           {/* Mobile right icons */}
           <div className="flex items-center gap-4 md:hidden">
-            {!hideSearch && <button onClick={toggleSearch} className="text-gray-600 text-xl"><FaSearch className="text-red-500" /></button>}
-            <Link to="/cart" className="relative">
+            {!hideSearch && (
+              <button onClick={toggleSearch} className="text-gray-600 text-xl flex items-center">
+                <FaSearch className="text-red-500" />
+              </button>
+            )}
+
+<Link to="/wishlist" className="relative"> <FaHeart className="text-2xl text-red-500" /> </Link>
+            <Link to="/cart" className="relative flex items-center">
               <FaShoppingCart className="text-2xl text-red-500" />
-              {cart.length > 0 && <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2">{cart.length}</span>}
+              {cart.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2">
+                  {cart.length}
+                </span>
+              )}
             </Link>
           </div>
 
@@ -92,7 +103,11 @@ const Navbar = () => {
             </Link>
             <Link to="/cart" className="relative">
               <FaShoppingCart className="text-2xl text-red-500" />
-              {cart.length > 0 && <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2">{cart.length}</span>}
+              {cart.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2">
+                  {cart.length}
+                </span>
+              )}
             </Link>
           </div>
 
@@ -119,12 +134,55 @@ const Navbar = () => {
 
       {/* Mobile menu overlay */}
       {menuOpen && (
-        <div className="absolute top-16 left-0 w-full bg-white shadow-md z-50 md:hidden px-4 pb-3">
-          <div className="flex flex-col px-7 py-6">
-            <Link to="/" onClick={() => setMenuOpen(false)} className="block py-2 hover:text-red-600 font-gothic text-md text-gray-800">Home</Link>
-            <Link to="/categories" onClick={() => setMenuOpen(false)} className="block py-2 hover:text-red-600 font-gothic text-md text-gray-800">Products</Link>
-            <Link to="/aboutus" onClick={() => setMenuOpen(false)} className="block py-2 hover:text-red-600 font-gothic text-md text-gray-800">About Us</Link>
+        <div className="absolute top-16 left-0 w-full bg-white shadow-md z-30 md:hidden px-6 pb-3">
+          <div className="flex flex-col py-4 space-y-3">
+            <Link to="/" onClick={() => setMenuOpen(false)} className="py-2 hover:text-red-600 font-gothic text-md text-gray-800">Home</Link>
+            <Link to="/categories" onClick={() => setMenuOpen(false)} className="py-2 hover:text-red-600 font-gothic text-md text-gray-800">Products</Link>
+            <Link to="/aboutus" onClick={() => setMenuOpen(false)} className="py-2 hover:text-red-600 font-gothic text-md text-gray-800">About Us</Link>
+
+            {/* Address Section */}
+            <div className="pt-4">
+              <p className="font-semibold text-gray-800 flex items-center gap-2">
+                <FaMapMarkerAlt className="text-red-500" /> Visit us at:
+              </p>
+              <p className="text-gray-600 text-sm mt-1">
+                2/162 Shop no:3, Koderu Road,<br />
+                Near Chinchinada Canal Bridge,<br />
+                Neggipudi, Maruteru, W.G Dist, A.P – 534122
+              </p>
+            </div>
+
+            {/* WhatsApp Section */}
+            <div className="pt-3">
+              <p className="font-semibold text-gray-800 flex items-center gap-2">
+                <FaWhatsapp className="text-green-500" /> WhatsApp us at :
+              </p>
+              <a
+                href="https://wa.me/919553717887"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-green-600 text-lg font-semibold"
+              >
+                9553717887
+              </a>
+            </div>
+
+            <p className="text-center text-gray-700 pt-6">Made with ❤️ in INDIA</p>
           </div>
+        </div>
+      )}
+
+      {/* ✅ Show order direct line only on Home page */}
+      {location.pathname === "/" && (
+        <div className="bg-orange-400 py-2 mt-3  sm:mt-0">
+          <a 
+            href="https://wa.me/919553717887" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="block text-center text-white font-gothic font-thin tracking-wide text-xs hover:underline "
+          >
+            📲 Order Direct @ WhatsApp – Click Here!
+          </a>
         </div>
       )}
     </nav>

@@ -2,13 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "./firebase";
-import { doc, getDoc, collection, getDocs, query, where, limit } from "firebase/firestore";
+import { collection, getDocs, query, where, limit } from "firebase/firestore";
 import { useCart } from "./CartContext";
 import { useWishlist } from "./WishlistContext";
 import MiniCart from "./MiniCart";
 import ProductCardMain from "./ProductCardMain";
 import imagealt from "../Assets/imagealt.png";
-import { Sparkles, Frown, RefreshCw } from "lucide-react";
+import { Frown } from "lucide-react";
 import { ArrowDownWideNarrow } from "lucide-react";
 
 const tips = [
@@ -20,7 +20,8 @@ const tips = [
 ];
 
 const ProductDetail = () => {
-  const { id } = useParams();
+  const { name } = useParams();
+  const productName = decodeURIComponent(name.trim());
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -37,8 +38,12 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [currentTip, setCurrentTip] = useState(tips[0]);
 
-  useEffect(() => { window.scrollTo(0, 0); }, []);
+  // Scroll to top when name changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [name]);
 
+  // Random tip
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTip(tips[Math.floor(Math.random() * tips.length)]);
@@ -46,25 +51,33 @@ const ProductDetail = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Load product
+  // Load product by name
   useEffect(() => {
     const loadProduct = async () => {
       try {
         setLoading(true);
-        const snap = await getDoc(doc(db, "products", id));
-        if (snap.exists()) {
-          const prod = { id: snap.id, ...snap.data() };
+        const q = query(
+          collection(db, "products"),
+          where("name", "==", productName),
+          limit(1)
+        );
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+          const prod = { id: snap.docs[0].id, ...snap.docs[0].data() };
           setProduct(prod);
           setSelectedCategory(prod.category);
+        } else {
+          setProduct(null);
         }
       } catch (err) {
         console.error("Error loading product:", err);
+        setProduct(null);
       } finally {
         setLoading(false);
       }
     };
     loadProduct();
-  }, [id]);
+  }, [productName]);
 
   // Load all categories
   useEffect(() => {
@@ -94,7 +107,10 @@ const ProductDetail = () => {
         const snap = await getDocs(q);
         const productsArr = [];
         snap.forEach((doc) => {
-          if (doc.id !== id) productsArr.push({ id: doc.id, ...doc.data() });
+          const data = doc.data();
+          if (data.name !== product?.name) {
+            productsArr.push({ id: doc.id, ...data });
+          }
         });
         setCategoryProducts(productsArr);
       } catch (err) {
@@ -102,9 +118,9 @@ const ProductDetail = () => {
       }
     };
     loadCategoryProducts();
-  }, [selectedCategory, id]);
+  }, [selectedCategory, product]);
 
-  // Handle Add to Cart
+  // Add to cart
   const handleAddToCart = () => {
     if (product.sizes?.length > 0 && !selectedSize) {
       setShowSizeWarning(true);
@@ -132,29 +148,33 @@ const ProductDetail = () => {
     setShowSizeWarning(false);
   };
 
-  if (loading) return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh]">
-      <div className="flex space-x-2">
-        <div className="w-3 h-3 bg-red-500 rounded-full animate-bounce"></div>
-        <div className="w-3 h-3 bg-yellow-500 rounded-full animate-bounce"></div>
-        <div className="w-3 h-3 bg-green-500 rounded-full animate-bounce"></div>
+  // Loading UI
+  if (loading)
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="flex space-x-2">
+          <div className="w-3 h-3 bg-red-500 rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bg-yellow-500 rounded-full animate-bounce"></div>
+          <div className="w-3 h-3 bg-green-500 rounded-full animate-bounce"></div>
+        </div>
+        <p className="mt-4 text-gray-600 font-medium">{currentTip}</p>
       </div>
-      <p className="mt-4 text-gray-600 font-medium">{currentTip}</p>
-    </div>
-  );
+    );
 
-  if (!product) return (
-    <div className="p-8 text-center text-gray-500">
-      <Frown size={48} className="mx-auto mb-4" />
-      <p className="text-lg font-semibold">Product not found.</p>
-      <button
-        onClick={() => window.location.reload()}
-        className="mt-4 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md"
-      >
-        Refresh
-      </button>
-    </div>
-  );
+  // Product not found
+  if (!product)
+    return (
+      <div className="p-8 text-center text-gray-500">
+        <Frown size={48} className="mx-auto mb-4" />
+        <p className="text-lg font-semibold">Product not found.</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-4 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md"
+        >
+          Refresh
+        </button>
+      </div>
+    );
 
   const prices = (product.sizes || []).map((s) => Number(s.price) || 0);
   const min = prices.length ? Math.min(...prices) : 0;
@@ -167,7 +187,11 @@ const ProductDetail = () => {
         {/* Product Image */}
         <div className="flex justify-center items-center">
           {product.imageUrl ? (
-            <img src={product.imageUrl} alt={product.name} className="w-72 h-72 scale-110 object-cover rounded-lg shadow sm:mt-11 mt-6" />
+            <img
+              src={product.imageUrl}
+              alt={product.name}
+              className="w-72 h-72 scale-110 object-cover rounded-lg shadow sm:mt-11 mt-6"
+            />
           ) : (
             <div className="w-full h-96 bg-gray-100 flex items-center justify-center rounded-lg shadow">
               <img src={imagealt} alt="noimage" />
@@ -177,7 +201,7 @@ const ProductDetail = () => {
 
         {/* Product Details */}
         <div className="sm:pt-11 pt-2">
-          <h1 className="text-2xl md:text-3xl font-gothic  text-gray-800">{product.name}</h1>
+          <h1 className="text-2xl md:text-3xl font-gothic text-gray-800">{product.name}</h1>
           <p className="text-md text-gray-500">{product.category}</p>
           <p className="text-2xl font-gothic mt-4 text-gray-700">{priceRange}</p>
 
@@ -190,23 +214,39 @@ const ProductDetail = () => {
                   <button
                     key={s.label}
                     onClick={() => setSelectedSize(s)}
-                    className={`px-3 py-1 rounded border transition ${selectedSize === s ? "bg-red-600 text-white border-red-600" : "bg-gray-100 border-gray-300"}`}
+                    className={`px-3 py-1 rounded border transition ${
+                      selectedSize === s
+                        ? "bg-red-600 text-white border-red-600"
+                        : "bg-gray-100 border-gray-300"
+                    }`}
                   >
                     {s.label} - ₹{s.price}
                   </button>
                 ))}
               </div>
               {showSizeWarning && (
-                <p className="text-red-600 font-medium mt-2">🥲 Please select a size before adding to cart</p>
+                <p className="text-red-600 font-medium mt-2">
+                  🥲 Please select a size before adding to cart
+                </p>
               )}
             </div>
           )}
 
           {/* Quantity */}
           <div className="mt-5 flex items-center gap-3">
-            <button onClick={() => setQuantity((q) => Math.max(1, q - 1))} className="px-3 py-1 border border-gray-300 rounded bg-gray-100 hover:bg-red-600 hover:text-white">-</button>
+            <button
+              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+              className="px-3 py-1 border border-gray-300 rounded bg-gray-100 hover:bg-red-600 hover:text-white"
+            >
+              -
+            </button>
             <div className="px-3">{quantity}</div>
-            <button onClick={() => setQuantity((q) => q + 1)} className="px-3 py-1 border border-gray-300 rounded bg-gray-100 hover:bg-red-600 hover:text-white">+</button>
+            <button
+              onClick={() => setQuantity((q) => q + 1)}
+              className="px-3 py-1 border border-gray-300 rounded bg-gray-100 hover:bg-red-600 hover:text-white"
+            >
+              +
+            </button>
           </div>
 
           {/* Add to Cart & Wishlist */}
@@ -214,13 +254,19 @@ const ProductDetail = () => {
             <button
               onClick={handleAddToCart}
               disabled={adding}
-              className={`px-6 py-2 sm:text-lg text-md rounded text-white font-gothic ${adding ? "bg-green-600" : "bg-red-600 hover:bg-red-700"}`}
+              className={`px-6 py-2 sm:text-lg text-md rounded text-white font-gothic ${
+                adding ? "bg-green-600" : "bg-red-600 hover:bg-red-700"
+              }`}
             >
               {adding ? "Added!" : "Add to Cart"}
             </button>
             <button
               onClick={() => toggleWishlist(product.id)}
-              className={`px-6 py-2 sm:text-lg text-md rounded font-gothic border ${isWishlisted(product.id) ? "bg-red-100 border-red-600 text-red-600" : "bg-gray-100 border-gray-300 hover:bg-gray-200"}`}
+              className={`px-6 py-2 sm:text-lg text-md rounded font-gothic border ${
+                isWishlisted(product.id)
+                  ? "bg-red-100 border-red-600 text-red-600"
+                  : "bg-gray-100 border-gray-300 hover:bg-gray-200"
+              }`}
             >
               {isWishlisted(product.id) ? "Wishlisted ❤️" : "Wishlist 🤍"}
             </button>
@@ -231,24 +277,35 @@ const ProductDetail = () => {
       {/* Related Category Products */}
       {categories.length > 0 && (
         <div className="mt-12">
-          <h2 className="text-2xl font-gothic  mb-4 text-gray-700 flex flex-row items-center ">You may also like <ArrowDownWideNarrow className="pl-3 sm:w-12 w-10 sm:h-12 h-10 font-bold" /></h2>
+          <h2 className="text-2xl font-gothic mb-4 text-gray-700 flex flex-row items-center">
+            You may also like{" "}
+            <ArrowDownWideNarrow className="pl-3 sm:w-12 w-10 sm:h-12 h-10 font-bold" />
+          </h2>
           <div className="flex gap-2 mb-4 overflow-x-auto">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded border whitespace-nowrap ${selectedCategory === cat ? "bg-red-600 text-white border-red-600" : "bg-gray-100 border-gray-300 hover:bg-gray-200"}`}
+                className={`px-4 py-2 rounded border whitespace-nowrap ${
+                  selectedCategory === cat
+                    ? "bg-red-600 text-white border-red-600"
+                    : "bg-gray-100 border-gray-300 hover:bg-gray-200"
+                }`}
               >
                 {cat}
               </button>
             ))}
           </div>
-          <div className="flex overflow-x-auto gap-4 py-2 ">
-            {categoryProducts.length > 0 ? categoryProducts.map((p) => (
-              <div key={p.id} className="flex-none w-60">
-                <ProductCardMain product={p} />
-              </div>
-            )) : <p className="text-gray-500 px-4">No products found in this category.</p>}
+          <div className="flex overflow-x-auto gap-4 py-2">
+            {categoryProducts.length > 0 ? (
+              categoryProducts.map((p) => (
+                <div key={p.id} className="flex-none w-60">
+                  <ProductCardMain product={p} />
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 px-4">No products found in this category.</p>
+            )}
           </div>
         </div>
       )}
