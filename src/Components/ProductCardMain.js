@@ -2,6 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useWishlist } from "./WishlistContext";
 import { motion } from "framer-motion";
+import options from "../Assets/options.png";
+import imagealt from "../Assets/imagealt.png"
+
+
+
 
 const ProductCard = ({ product }) => {
   const { toggleWishlist, isWishlisted } = useWishlist();
@@ -15,7 +20,7 @@ const ProductCard = ({ product }) => {
   const priceRange = min === max ? `₹${min}` : `₹${min} - ₹${max}`;
 
   return (
-    <div className="bg-white border-2 rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300">
+    <div className="pb-2 bg-white border-2 rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300">
       {/* Image container with padding for uniform gap */}
       <div className="relative p-3 pt-3 flex justify-center items-center">
         {product?.imageUrl ? (
@@ -26,7 +31,8 @@ const ProductCard = ({ product }) => {
           />
         ) : (
           <div className="w-full h-40 bg-gray-100 flex items-center justify-center rounded-md">
-            No Image
+                        <img src={imagealt} alt="noimage"/>
+
           </div>
         )}
 
@@ -73,27 +79,18 @@ const ProductCard = ({ product }) => {
 
       {/* Text section */}
       <div className="p-3 text-center">
-        <h3 className="text-sm font-semibold">{product?.name}</h3>
-        <p className="text-xs text-gray-500 mt-1">{product?.category}</p>
-        <p className="text-sm font-medium mt-2">{priceRange}</p>
+        <h3 className="font-gothic text-gray-800 text-md">{product?.name}</h3>
+        <p className="text-sm text-gray-500 mt-1">{product?.category}</p>
+        <p className="text-md font-gothic text-gray-600 mt-1">{priceRange}</p>
 
         {/* Select Options button */}
         <div className="flex justify-center">
-        <div className="mt-3 flex items-center justify-between">
+        <div className="mt-3 flex items-center justify-between ">
           <Link
-            to={`/product/${product?.id}`}
-            className="flex items-center gap-2 text-sm bg-red-600 hover:bg-emerald-700 transition text-white px-3 py-1 rounded"
+            to={`/product/${encodeURIComponent(product.name)}`}
+            className="flex items-center font-medium gap-2 text-sm bg-red-600 hover:scale-105 transition text-white px-3 py-1 rounded"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9h14l-2-9M10 21h4" />
-            </svg>
+            <img src={options} className="h-4 w-4" alt="options" />
             Select Options
           </Link>
         </div>
@@ -104,3 +101,4 @@ const ProductCard = ({ product }) => {
 };
 
 export default ProductCard;
+
